@@ -39,20 +39,15 @@ class Card:
         self.name = str(self.valueName) + " of " + str(self.suit)
         self.shortName = str(self.shortValue) + '-' + str(self.suit[0])
 
-
 class Deck:
     def __init__(self, name):
         self.name = name
         self.cardSet = []
     def addCard(self, Card):
         self.cardSet.append(Card)
-    def dealCard(self, target):
-        drawnCard = self.cardSet.pop()
-        print(str(self.name) + " dealt a card to " + str(target) + '.')
-        target.playerHand.addCard(drawnCard)
-    def burnCard(self):
-        self.cardSet.pop()
-        print(str(self.name) + " burnt a card.")
+    def removeCard(self):
+        removedCard = self.cardSet.pop()
+        return removedCard
     def display(self):
         output = []
         for card in self.cardSet:
@@ -63,13 +58,19 @@ class Deck:
     def __repr__(self):
         return self.name
 
-
 class Player:
     def __init__(self, playerName, playerCurrency, playerNumber):
         self.playerName = playerName
         self.playerHand = Deck(str(self.playerName))
         self.playerCurrency = playerCurrency
         self.PlayerNumber = playerNumber
+    def burnCard(self):
+        self.playerHand.removeCard()
+        print(str(self.playerName) + " burnt a card.")
+    def dealCard(self, target):
+        tempCard = self.playerHand.removeCard()
+        print(str(self.playerName) + " dealt a card to " + str(target) + '.')
+        target.playerHand.addCard(tempCard)
     def __repr__(self):
         return self.playerName
     def __str__(self):
@@ -106,7 +107,6 @@ def DeckBuilder():
         newCard = Card(cardList[slot])
         currentDeck.addCard(newCard)
 
-
 playerCount = 5
 dealer = Player("The Dealer", 50000, 0)
 currentDeck = Deck("New Deck")
@@ -118,37 +118,31 @@ for count in range(1, playerCount+1):
     print(str(newPlayer) + " has joined the game.")
 #print(str(players))
 
-
-
-
-
-
 DeckBuilder()
 dealer.playerHand = currentDeck
 dealer.playerHand.name = 'The Dealer'
 
 #hand = Deck("Hand")
 
-
 for x in range(0, 2):
     for player in players:
-        dealer.playerHand.dealCard(player)
+        dealer.dealCard(player)
 
 players[0].playerHand.display()
 
-dealer.playerHand.burnCard()
+dealer.burnCard()
 for x in range(0, 3):
-    dealer.playerHand.dealCard(table)
+    dealer.dealCard(table)
 print('                 ---FLOP---')
 table.playerHand.display()
 print('                 ---FLOP---')
-dealer.playerHand.burnCard()
-dealer.playerHand.dealCard(table)
+dealer.burnCard()
+dealer.dealCard(table)
 print('                    ---TURN---')
 table.playerHand.display()
 print('                    ---TURN---')
-dealer.playerHand.burnCard()
-dealer.playerHand.dealCard(table)
+dealer.burnCard()
+dealer.dealCard(table)
 print('                       ---RIVER---')
 table.playerHand.display()
 print('                       ---RIVER---')
